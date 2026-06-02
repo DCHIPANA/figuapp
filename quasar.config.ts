@@ -21,6 +21,7 @@ export default defineConfig((/* ctx */) => {
 
     // ── Build ───────────────────────────────────────────────────────────────
     build: {
+      publicPath: '/figuapp/',
       target: {
         browser: 'baseline-widely-available',
         node: 'node22'
