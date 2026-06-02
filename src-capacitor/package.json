@@ -1,0 +1,13 @@
+{
+  "name": "daste.dev.figuapp",
+  "version": "0.0.1",
+  "description": "Aplicación para el seguimiento de llenado de figuritas de albunes",
+  "author": "dchipana <dchipana@inen.sld.pe>",
+  "private": true,
+  "dependencies": {
+    "@capacitor/android": "^8.3.4",
+    "@capacitor/app": "^8.0.0",
+    "@capacitor/cli": "^8.0.0",
+    "@capacitor/core": "^8.0.0"
+  }
+}

@@ -1,1 +1,190 @@
-// app global css
+// FigüApp — Global styles
+
+body,
+.q-page,
+.q-layout {
+  background: #0a0e1a !important;
+  color: #f1f5f9;
+}
+
+.figuapp-card {
+  background: #1c2436;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+}
+
+.sticker-cell {
+  border-radius: 8px;
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    transform 0.1s,
+    background 0.15s;
+  background: #252e42;
+  padding: 4px 2px;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+
+  &:active {
+    transform: scale(0.92);
+  }
+
+  &__number {
+    font-size: 9px;
+    font-weight: 700;
+    color: #64748b;
+    line-height: 1;
+  }
+
+  &__photo {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+
+  &__initials {
+    width: 100%;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #94a3b8;
+  }
+
+  &__name {
+    font-size: 8px;
+    font-weight: 600;
+    color: #94a3b8;
+    text-align: center;
+    line-height: 1.1;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 2px;
+  }
+
+  &--owned {
+    background: rgba(34, 197, 94, 0.15);
+    border-color: #22c55e;
+
+    .sticker-cell__number,
+    .sticker-cell__name {
+      color: #22c55e;
+    }
+
+    .sticker-cell__initials {
+      background: rgba(34, 197, 94, 0.2);
+      color: #22c55e;
+    }
+  }
+
+  &--repeated {
+    background: rgba(245, 184, 0, 0.18);
+    border-color: #f5b800;
+
+    .sticker-cell__number,
+    .sticker-cell__name {
+      color: #f5b800;
+    }
+
+    .sticker-cell__initials {
+      background: rgba(245, 184, 0, 0.2);
+      color: #f5b800;
+    }
+  }
+
+  &--special {
+    border-color: #a855f7;
+
+    .sticker-cell__initials {
+      background: rgba(168, 85, 247, 0.15);
+      color: #a855f7;
+    }
+  }
+
+  &--extra_gold {
+    border-color: #f5b800;
+    box-shadow: 0 0 6px rgba(245, 184, 0, 0.3);
+  }
+
+  &--extra_silver {
+    border-color: #94a3b8;
+    box-shadow: 0 0 4px rgba(148, 163, 184, 0.25);
+  }
+
+  &--extra_bronze {
+    border-color: #b87333;
+  }
+
+  &--coca {
+    border-color: #ef4444;
+  }
+}
+
+.figuapp-progress {
+  height: 8px;
+  border-radius: 20px;
+  background: #252e42;
+  overflow: hidden;
+
+  &__fill {
+    height: 100%;
+    border-radius: 20px;
+    background: linear-gradient(90deg, #f5b800, #ff6b35);
+    transition: width 0.5s ease;
+  }
+}
+
+.figuapp-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+
+  &--gold {
+    background: rgba(245, 184, 0, 0.15);
+    color: #f5b800;
+  }
+
+  &--green {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+  }
+
+  &--red {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+  }
+
+  &--blue {
+    background: rgba(59, 130, 246, 0.15);
+    color: #3b82f6;
+  }
+
+  &--purple {
+    background: rgba(168, 85, 247, 0.15);
+    color: #a855f7;
+  }
+}
+
+.q-tab--active .q-tab__label,
+.q-tab--active .q-icon {
+  color: #f5b800 !important;
+}
+
+.q-tab-panels {
+  background: transparent !important;
+}

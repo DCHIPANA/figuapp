@@ -1,81 +1,90 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
-
-        <q-toolbar-title> Quasar App </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
-      </q-toolbar>
-    </q-header>
-
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <q-list>
-        <q-item-label header> Essential Links </q-item-label>
-
-        <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
-      </q-list>
-    </q-drawer>
+  <q-layout view="lHh lpr lFf">
+    <div class="status-bar-spacer" />
 
     <q-page-container>
-      <router-view />
+      <router-view v-slot="{ Component }">
+        <transition name="fade-slide" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
     </q-page-container>
+
+    <q-footer elevated class="bg-dark text-white">
+      <!--
+        isCompact: pantalla pequeña (alto < 500px → popup flotante).
+        En modo compacto: footer más delgado, sin labels, iconos más pequeños.
+      -->
+      <q-tabs v-model="activeTab" dense align="justify" active-color="primary" indicator-color="transparent"
+        :style="isCompact ? 'height:44px' : 'height:60px'">
+        <q-tab name="inicio" icon="home" :label="isCompact ? undefined : 'Inicio'"
+          :icon-right="isCompact ? undefined : undefined" :class="isCompact ? 'compact-tab' : 'text-caption'"
+          @click="router.push('/inicio')" />
+        <q-tab name="album" icon="menu_book" :label="isCompact ? undefined : 'Álbum'"
+          :class="isCompact ? 'compact-tab' : 'text-caption'" @click="router.push('/album')" />
+        <q-tab name="intercambio" icon="swap_horiz" :label="isCompact ? undefined : 'Intercambio'"
+          :class="isCompact ? 'compact-tab' : 'text-caption'" @click="router.push('/intercambio')">
+          <q-badge v-if="pendingCount > 0" color="negative" floating rounded>
+            {{ pendingCount }}
+          </q-badge>
+        </q-tab>
+      </q-tabs>
+    </q-footer>
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import EssentialLink, { type EssentialLinkProps } from 'components/EssentialLink.vue';
+import { computed, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useAlbumStore } from 'stores/album'
+import { useQuasar } from 'quasar'
 
-const linksList: EssentialLinkProps[] = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev',
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework',
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev',
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev',
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev',
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev',
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev',
-  },
-];
+const router = useRouter()
+const route = useRoute()
+const store = useAlbumStore()
+const $q = useQuasar()
 
-const leftDrawerOpen = ref(false);
+const pendingCount = computed(() => store.myPendingTrades.length)
 
-function toggleLeftDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value;
-}
+// Compacto cuando el alto de la ventana es menor a 500px (popup flotante)
+const isCompact = computed(() => $q.screen.height < 500)
+
+const activeTab = ref<'inicio' | 'album' | 'intercambio'>('inicio')
+
+watch(
+  () => route.path,
+  (path) => {
+    if (path.startsWith('/album')) activeTab.value = 'album'
+    else if (path.startsWith('/intercambio')) activeTab.value = 'intercambio'
+    else activeTab.value = 'inicio'
+  },
+  { immediate: true }
+)
 </script>
+
+<style scoped>
+.status-bar-spacer {
+  height: env(safe-area-inset-top, 0px);
+  background: #111827;
+}
+
+/* En modo compacto los iconos se achican un poco */
+.compact-tab :deep(.q-icon) {
+  font-size: 20px !important;
+}
+
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: opacity .18s, transform .18s;
+}
+
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+</style>
