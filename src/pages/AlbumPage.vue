@@ -258,6 +258,7 @@ onMounted(() => {
         if (w) containerWidth.value = w
     })
     if (gridContainer.value) ro.observe(gridContainer.value)
+    void store.loadOwnStickersFromServer()
 })
 onUnmounted(() => ro?.disconnect())
 

@@ -56,7 +56,7 @@ const imgFailed = ref(false)
 watch(() => props.sticker.imgKey, () => { imgFailed.value = false })
 
 const photoSrc = computed(() =>
-    props.sticker.imgKey ? `/stickers/${props.sticker.imgKey}.webp` : null
+    props.sticker.imgKey ? `${import.meta.env.BASE_URL}stickers/${props.sticker.imgKey}.webp` : null
 )
 
 const initials = computed(() => {
@@ -84,6 +84,7 @@ const cellStyle = computed(() => {
     const s = SIZE_MAP[props.size ?? 'md'] ?? SIZE_MAP.md!
     return { width: s.w + 'px', minHeight: s.h + 'px' }
 })
+
 </script>
 
 <style scoped>

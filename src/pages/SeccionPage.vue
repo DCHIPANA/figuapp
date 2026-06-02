@@ -50,9 +50,8 @@
             <q-card flat class="figuapp-card q-pa-lg" style="width: 100%" v-if="detailSticker">
                 <div class="row items-center q-gutter-md q-mb-md">
                     <div class="detail-photo-wrap">
-                        <img v-if="showDetailImg && detailSticker.imgKey"
-                            :src="`/stickers/${detailSticker.imgKey}.webp`" class="detail-photo"
-                            @error="showDetailImg = false" />
+                        <img v-if="showDetailImg && detailSticker.imgKey" :src="stickerUrl(detailSticker.imgKey)"
+                            class="detail-photo" @error="showDetailImg = false" />
                         <div v-else class="detail-initials">{{ detailInitials }}</div>
                     </div>
 
@@ -137,6 +136,10 @@ const detailInitials = computed(() => {
 
     return (parts[0]?.substring(0, 2) ?? '?').toUpperCase()
 })
+
+function stickerUrl(imgKey: string) {
+    return `${import.meta.env.BASE_URL}stickers/${imgKey}.webp`
+}
 
 function onToggle(n: number) {
     store.toggleSticker(n)

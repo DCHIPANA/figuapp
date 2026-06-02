@@ -397,6 +397,7 @@ export const useAlbumStore = defineStore('album', () => {
             user.value = userData
             currentAlbumId.value = userData.albums?.[0]?.id ?? DEFAULT_ALBUM_ID
             loadStickers()
+            void loadOwnStickersFromServer()
         }
 
         if (storedTrades.length > 0) trades.value = storedTrades
@@ -477,6 +478,7 @@ export const useAlbumStore = defineStore('album', () => {
     function switchAlbum(albumId: string) {
         currentAlbumId.value = albumId
         loadStickers()
+        void loadOwnStickersFromServer()
     }
 
     function logout() {

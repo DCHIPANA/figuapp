@@ -63,7 +63,7 @@
             <!-- Scroll horizontal de miniaturas -->
             <div class="repeated-scroll">
                 <div v-for="st in repeatedStickers.slice(0, repeatedVisible)" :key="st.n" class="repeated-mini">
-                    <img v-if="st.imgKey && !failedImgs.has(st.imgKey)" :src="`/stickers/${st.imgKey}.webp`"
+                    <img v-if="st.imgKey && !failedImgs.has(st.imgKey)" :src="stickerUrl(st.imgKey)"
                         class="repeated-mini__img" @error="failedImgs.add(st.imgKey!)" draggable="false" />
                     <div v-else class="repeated-mini__initials">{{ stickerInitials(st) }}</div>
                     <div class="repeated-mini__country">{{ stickerCountryCode(st) }}</div>
@@ -187,6 +187,10 @@ const initial = computed(() => (store.user?.name ?? '?').charAt(0).toUpperCase()
 const avatarBg = computed(() => COLORS[(store.user?.name || '').charCodeAt(0) % COLORS.length])
 const completionPct = computed(() => store.completionPct)
 const userAlbums = computed(() => store.user?.albums ?? [])
+
+function stickerUrl(imgKey: string) {
+    return `${import.meta.env.BASE_URL}stickers/${imgKey}.webp`
+}
 
 // ── Secciones: completadas vs incompletas ────────────────────────────────────
 

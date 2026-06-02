@@ -31,7 +31,7 @@
                 </div>
                 <div v-for="st in offeredStickers" :key="st.n" class="trade-sticker-row">
                     <div class="trade-sticker-thumb">
-                        <img v-if="st.imgKey && !failedImgs.has(st.imgKey)" :src="`/stickers/${st.imgKey}.webp`"
+                        <img v-if="st.imgKey && !failedImgs.has(st.imgKey)" :src="stickerUrl(st.imgKey)"
                             class="trade-sticker-thumb__img" @error="failedImgs.add(st.imgKey!)" draggable="false" />
                         <div v-else class="trade-sticker-thumb__initials">{{ initials(st) }}</div>
                     </div>
@@ -54,7 +54,7 @@
                 </div>
                 <div v-for="st in wantedStickers" :key="st.n" class="trade-sticker-row">
                     <div class="trade-sticker-thumb">
-                        <img v-if="st.imgKey && !failedImgs.has(st.imgKey)" :src="`/stickers/${st.imgKey}.webp`"
+                        <img v-if="st.imgKey && !failedImgs.has(st.imgKey)" :src="stickerUrl(st.imgKey)"
                             class="trade-sticker-thumb__img" @error="failedImgs.add(st.imgKey!)" draggable="false" />
                         <div v-else class="trade-sticker-thumb__initials">{{ initials(st) }}</div>
                     </div>
@@ -193,6 +193,10 @@ const dateLabel = computed(() => {
 
 // ¿Es álbum digital? (para mostrar aviso de app Panini)
 const isDigitalAlbum = computed(() => props.trade.albumId.includes('virtual'))
+
+function stickerUrl(imgKey: string) {
+    return `${import.meta.env.BASE_URL}stickers/${imgKey}.webp`
+}
 
 // ── Helpers de figurita ───────────────────────────────────────────────────────
 function getStickerByN(n: number): AlbumSticker | null {

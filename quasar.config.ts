@@ -1,6 +1,6 @@
 import { defineConfig } from '#q-app/wrappers'
 
-export default defineConfig((/* ctx */) => {
+export default defineConfig((ctx) => {
   return {
 
     // ── Boot files ──────────────────────────────────────────────────────────
@@ -21,7 +21,7 @@ export default defineConfig((/* ctx */) => {
 
     // ── Build ───────────────────────────────────────────────────────────────
     build: {
-      publicPath: '/figuapp/',
+      publicPath: ('pwa' in ctx.mode && ctx.mode.pwa) ? '/figuapp/' : '/',
       target: {
         browser: 'baseline-widely-available',
         node: 'node22'

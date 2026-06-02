@@ -54,7 +54,7 @@
                         <div class="row q-gutter-xs">
                             <div v-for="st in matchOwned(u).slice(0, matchPage * MATCH_PAGE_SIZE)" :key="st.n"
                                 class="match-sticker">
-                                <img v-if="st.imgKey && !failedImgs.has(st.imgKey)" :src="`/stickers/${st.imgKey}.webp`"
+                                <img v-if="st.imgKey && !failedImgs.has(st.imgKey)" :src="stickerUrl(st.imgKey)"
                                     class="match-sticker__img" @error="failedImgs.add(st.imgKey!)" draggable="false" />
                                 <div v-else class="match-sticker__initials">{{ stickerInitials(st) }}</div>
                                 <div class="match-sticker__label">{{ stickerCountryCode(st) }}</div>
@@ -71,7 +71,7 @@
                         <div class="row q-gutter-xs">
                             <div v-for="st in matchRepeated(u).slice(0, matchPage * MATCH_PAGE_SIZE)" :key="st.n"
                                 class="match-sticker">
-                                <img v-if="st.imgKey && !failedImgs.has(st.imgKey)" :src="`/stickers/${st.imgKey}.webp`"
+                                <img v-if="st.imgKey && !failedImgs.has(st.imgKey)" :src="stickerUrl(st.imgKey)"
                                     class="match-sticker__img" @error="failedImgs.add(st.imgKey!)" draggable="false" />
                                 <div v-else class="match-sticker__initials">{{ stickerInitials(st) }}</div>
                                 <div class="match-sticker__label">{{ stickerCountryCode(st) }}</div>
@@ -90,12 +90,22 @@
 
             <!-- ── Tab: Mis intercambios ────────────────────────────────── -->
             <div v-if="tab === 'my_trades'">
+                <div v-if="acceptedTrades.length" class="q-mb-md">
+                    <div class="text-caption text-grey-5 q-mb-xs">POR CONFIRMAR</div>
+                    <TradeCard v-for="trade in acceptedTrades" :key="trade.id" :trade="trade" @accept="acceptTrade"
+                        @reject="rejectTrade" @confirm="confirmTrade" @delete="cancelTrade" />
+                </div>
                 <div v-if="pendingTrades.length" class="q-mb-md">
-                    <div class="text-caption text-grey-5 q-mb-xs">SOLICITUDES PENDIENTES</div>
+                    <div class="text-caption text-grey-5 q-mb-xs">PENDIENTES</div>
                     <TradeCard v-for="trade in pendingTrades" :key="trade.id" :trade="trade" @accept="acceptTrade"
                         @reject="rejectTrade" @confirm="confirmTrade" @delete="cancelTrade" />
                 </div>
 
+                <div v-else-if="otherTrades.length > 0" class="q-mb-md">
+                    <div class="text-caption text-grey-5 q-mb-xs">SOLICITUDES REGISTRADAS</div>
+                    <TradeCard v-for="trade in otherTrades" :key="trade.id" :trade="trade" @accept="acceptTrade"
+                        @reject="rejectTrade" @confirm="confirmTrade" @delete="cancelTrade" />
+                </div>
                 <div v-if="otherTrades.length === 0" class="text-center q-py-xl text-grey-6">
                     <q-icon name="swap_horiz" size="48px" color="grey-8" /><br />No hay intercambios aún
                 </div>
@@ -110,7 +120,7 @@
                             <q-item-section>
                                 <q-item-label class="text-weight-medium">{{ r.from }} → {{ r.to }}</q-item-label>
                                 <q-item-label v-if="r.description" caption class="text-grey-6">{{ r.description
-                                    }}</q-item-label>
+                                }}</q-item-label>
                             </q-item-section>
                             <q-item-section side>
                                 <q-chip dense color="amber-9" text-color="black" :label="r.ratio" />
@@ -144,7 +154,7 @@
                 <div class="trade-sticker-grid q-mb-md">
                     <div v-for="st in myOfferableStickers" :key="st.n" class="trade-sticker"
                         :class="{ 'trade-sticker--selected': offerSet.has(st.n) }" @click="toggleOffer(st.n)">
-                        <img v-if="st.imgKey && !failedImgs.has(st.imgKey)" :src="`/stickers/${st.imgKey}.webp`"
+                        <img v-if="st.imgKey && !failedImgs.has(st.imgKey)" :src="stickerUrl(st.imgKey)"
                             class="trade-sticker__img" @error="failedImgs.add(st.imgKey!)" draggable="false" />
                         <div v-else class="trade-sticker__initials">{{ stickerInitials(st) }}</div>
                         <div class="trade-sticker__country">{{ stickerCountryCode(st) }}</div>
@@ -161,7 +171,7 @@
                 <div class="trade-sticker-grid q-mb-lg">
                     <div v-for="st in theirOfferableStickers" :key="st.n" class="trade-sticker"
                         :class="{ 'trade-sticker--selected': wantSet.has(st.n) }" @click="toggleWant(st.n)">
-                        <img v-if="st.imgKey && !failedImgs.has(st.imgKey)" :src="`/stickers/${st.imgKey}.webp`"
+                        <img v-if="st.imgKey && !failedImgs.has(st.imgKey)" :src="stickerUrl(st.imgKey)"
                             class="trade-sticker__img" @error="failedImgs.add(st.imgKey!)" draggable="false" />
                         <div v-else class="trade-sticker__initials">{{ stickerInitials(st) }}</div>
                         <div class="trade-sticker__country">{{ stickerCountryCode(st) }}</div>
@@ -232,13 +242,21 @@ const sortedTrades = computed(() =>
     })
 )
 
+const acceptedTrades = computed(() =>
+    sortedTrades.value.filter(t => t.status === 'accepted')
+)
+
 const pendingTrades = computed(() =>
-    sortedTrades.value.filter(t => t.status === 'accepted' && t.to === store.user?.id)
+    sortedTrades.value.filter(t => t.status === 'pending')
 )
 
 const otherTrades = computed(() =>
-    sortedTrades.value.filter(t => !(t.status === 'pending' && t.to === store.user?.id))
+    sortedTrades.value.filter(t => !['accepted', 'pending'].includes(t.status))
 )
+
+function stickerUrl(imgKey: string) {
+    return `${import.meta.env.BASE_URL}stickers/${imgKey}.webp`
+}
 
 function getAllAlbumStickerNumbers(): number[] {
     return store.currentAlbum.sections.flatMap(sec =>
